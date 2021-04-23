@@ -19,7 +19,7 @@
           </el-col>
         </el-row>
      </el-card>
-     <!-- 新闻列表区域 -->
+     <!-- 商品列表区域 -->
     <el-table :data="tableData" stripe>
     <el-table-column type="index" label="#"></el-table-column>
         <el-table-column prop="username" label="姓名"></el-table-column>
@@ -54,7 +54,7 @@ export default {
     data(){
         return{
             input:'',
-            tableData:'',
+            tableData:[],
             //获取新闻列表的参数对象 
             queryInfo:{
               query:'',
@@ -64,7 +64,12 @@ export default {
               pagesize:2
             },
             total:0,
+            value:''
         }
+    },
+    created(){
+        this.getGoodsList()
+        console.log(1);
     },
     methods: {
       handleSizeChange(newSize){
@@ -72,6 +77,12 @@ export default {
       },
       handleCurrentChange(newPage){
 
+      },
+      async getGoodsList(){
+          console.log(3)
+          const {data:res}=await this.$axios.get(this.$root.api.goodsList);
+          console.log(res);
+          console.log(2)
       }
     },
 }

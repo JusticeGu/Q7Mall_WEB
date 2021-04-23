@@ -6,7 +6,8 @@ const Login=()=>import('../components/login.vue');
 const Home=()=>import('../components/home.vue');
 const Welcome=()=>import('../components/welcome.vue');
 
-const News=()=>import('../components/news/news.vue');
+const List=()=>import('../components/goods/list.vue');
+const Brand=()=>import('../components/goods/brand.vue');
 const Persons=()=>import('../components/persons/persons')
 
 Vue.use(VueRouter)
@@ -19,8 +20,9 @@ const routes = [
     redirect: '/welcome',
     children: [
       { path: '/welcome', component: Welcome },
-      { path: '/news', component: News },
+      { path: '/brand', component: Brand },
       { path: '/persons', component: Persons },
+      { path: '/list', component: List },
     ] }
 
 ]

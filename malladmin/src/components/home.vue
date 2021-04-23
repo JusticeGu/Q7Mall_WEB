@@ -62,7 +62,12 @@ export default {
                {
                  id: 114,
                  authName: "商品列表",
-                 path: "news",
+                 path: "list",
+                },
+                {
+                 id: 115,
+                 authName: "品牌列表",
+                 path: "brand",
                 }
            ]},
           {
