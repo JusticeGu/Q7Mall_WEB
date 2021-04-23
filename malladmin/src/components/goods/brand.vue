@@ -30,16 +30,16 @@
              </el-switch>
            </template>
         </el-table-column>
-        <el-table-column label="操作" width="300px">
+        <el-table-column label="操作" width="200px">
           <template slot-scope="scope">
              <!-- <el-tooltip class="item" effect="dark" content="修改" placement="top" enterable="false"> -->
                <el-button type="primary" size='mini' icon="el-icon-edit">修改</el-button>
              <!-- </el-tooltip> -->
              <!-- <el-tooltip class="item" effect="dark" content="删除" placement="top" enterable="false"> -->
-               <el-button type="danger" size='mini' icon="el-icon-delete">删除</el-button>
+               <el-button type="danger" size='mini' icon="el-icon-delete" @click="removeBrandId(scope.row.bid)">删除</el-button>
              <!-- </el-tooltip> -->
              <!-- <el-tooltip class="item" effect="dark" content="添加" placement="top" enterable="false"> -->
-                <el-button type="info" size='mini' icon="el-icon-setting">添加</el-button>
+                <!-- <el-button type="info" size='mini' icon="el-icon-setting">添加</el-button> -->
              <!-- </el-tooltip> -->
           
           </template>
@@ -59,8 +59,13 @@
     <!-- 添加品牌的对话框 -->
     <el-dialog  title="添加商品品牌" :visible.sync="brandDialogVisible" width="30%"
       center @close="addDialogClosed">
+    
+      <el-form
+        :model="addBrandForm"
+        ref="addBrandForms"
+        :rules="addBrandRules"
+        label-width="100px">
 
-      <el-form :model="addBrandForm" :rules="addBrandRules" ref="addBrandForms" label-width="100px">
         <el-form-item label="品牌名称" prop="name">
           <el-input v-model="addBrandForm.name" @blur="blurTest"></el-input>
         </el-form-item>
@@ -88,6 +93,7 @@
 </template>
 <script>
 export default {
+  
     data(){
       var checkName=(rule,value,callback)=>{
         if(value===''){
@@ -101,7 +107,7 @@ export default {
         }
         callback()
       } 
-        return{
+       return{
             input:'',
             tableBrandData:[],
             //获取新闻列表的参数对象 
@@ -140,7 +146,8 @@ export default {
      async  getBrandData(){
       //  console.log(this.queryInfo);
       const {data:res}=await this.$axios.get(this.$root.api.brandList,
-      {params: this.queryInfo});
+      {params: {start:this.queryInfo.start-1,num:this.queryInfo.num}});
+      // this.queryInfo
       if(res.rspCode!=='200'){
         this.$message.error('获取品牌列表失败')
       }
@@ -167,7 +174,7 @@ export default {
         this.getBrandData();
       },
       handleCurrentChange(newPage){
-        this.queryInfo.start=newPage-1;
+        this.queryInfo.start=newPage;
         // console.log(newPage);
         this.getBrandData();
       },
@@ -175,7 +182,7 @@ export default {
         // console.log(this.addBrandForm.varify)
         this.$refs.addBrandForms.resetFields()
       },
-     async  addBrandContent(){
+     async addBrandContent(){
       //  this.$refs.addBrandForms.validate(valid=>{
       //  if(!valid) return 
       //   })
@@ -192,6 +199,28 @@ export default {
        this.$message.success('添加品牌成功');
        this.brandDialogVisible=false;
        this.getBrandData();
+      },
+      removeBrandId(Id){
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+         const {data:res}= await this.$axios.delete(this.$root.api.brandDelete,
+          {params:{bid:Id}});
+          console.log(Id);
+          console.log(res)
+          if(res.rspCode==="200"){
+            this.$message.success('删除成功!')
+            this.getBrandData();
+          }else{
+            this.$message.error('删除失败!')
+          }
+        
+
+        }).catch(() => {
+          this.$message.info('已取消删除')
+        });
       }
     },
 }
