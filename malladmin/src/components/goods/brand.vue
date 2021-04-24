@@ -33,7 +33,7 @@
         <el-table-column label="操作" width="200px">
           <template slot-scope="scope">
              <!-- <el-tooltip class="item" effect="dark" content="修改" placement="top" enterable="false"> -->
-               <el-button type="primary" size='mini' icon="el-icon-edit">修改</el-button>
+               <el-button type="primary" size='mini' icon="el-icon-edit" @click="editBrand(scope.row.name)">修改</el-button>
              <!-- </el-tooltip> -->
              <!-- <el-tooltip class="item" effect="dark" content="删除" placement="top" enterable="false"> -->
                <el-button type="danger" size='mini' icon="el-icon-delete" @click="removeBrandId(scope.row.bid)">删除</el-button>
@@ -87,8 +87,33 @@
         <el-button @click="brandDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addBrandContent">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> 
 
+     <!-- 品牌修改 -->
+     <el-dialog title="提示" :visible.sync="editBrandVisible" width="30%"
+     center @close="editBrandClosed">
+      <el-form ref="editBrandref" :model="editBrandForm" :rules="addBrandRules" label-width="80px">
+        <el-form-item label="品牌名称">
+          <el-input v-model="editBrandForm.name" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="品牌等级">
+          <el-select v-model="editBrandForm.b_sort" placeholder="请选择活动区域">
+             <el-option label="等级一" value=0></el-option>
+             <el-option label="等级二" value=1></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="品牌logo" prop="logo" >
+          <el-input v-model="editBrandForm.logo" ></el-input>
+        </el-form-item>
+        <el-form-item label="是否名牌">
+          <el-switch v-model="editBrandForm.varify"></el-switch>
+        </el-form-item>
+      </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editBrandContent">确 定</el-button>
+        </span>
+     </el-dialog>
     </div>
 </template>
 <script>
@@ -130,7 +155,16 @@ export default {
             addBrandRules:{
               name:[{required:true,message:'请输入品牌名称',trigger:'blur'},{ validator:checkName,trigger:'blur'}],
               logo:[{required:true,message:'请上传品牌logo',trigger:'blur'},{ validator:checkLogo,trigger:'blur'}],
-            }
+            },
+            editBrandVisible:false,
+            editBrandForm:{
+              name:'',
+              b_sort:0,
+              logo:"",
+              varify:false
+            },
+
+
         }
     },
     created(){
@@ -178,6 +212,7 @@ export default {
         // console.log(newPage);
         this.getBrandData();
       },
+      //添加品牌
       addDialogClosed(){
         // console.log(this.addBrandForm.varify)
         this.$refs.addBrandForms.resetFields()
@@ -216,11 +251,37 @@ export default {
           }else{
             this.$message.error('删除失败!')
           }
-        
-
         }).catch(() => {
           this.$message.info('已取消删除')
         });
+      },
+      // 修改品牌
+     async editBrand(brandname){
+        const {data:res}= await this.$axios.get(this.$root.api.brandListQuery,
+         {params: {brandname:this.brandname}});
+        if(res.rspCode!=='200'){
+         this.$message.error('查询品牌失败')
+         };
+      this.editBrandForm=res.data;   
+      this.editBrandVisible=true;
+      
+      },
+      editBrandClosed(){
+        this.$refs.editBrandref.resetFields();
+      },
+      async editBrandContent(){
+        this.$refs.editBrandref.validate((valid)=>{
+          if(!valid) return
+        })
+        const {data:res}=await this.$axios.put(this.$root.api.brandUpdate,
+        this.editBrandForm);
+        if(res.rspCode!=='200'){
+          this.$message.error('品牌更新失败')
+        }
+
+        this.editBrandVisible=false;
+        this.getBrandData();
+        this.$message.success('品牌更新成功')
       }
     },
 }

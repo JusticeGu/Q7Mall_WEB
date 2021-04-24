@@ -62,7 +62,7 @@ export default {
                {
                  id: 114,
                  authName: "商品列表",
-                 path: "list",
+                 path: "category",
                 },
                 {
                  id: 115,

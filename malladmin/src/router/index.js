@@ -6,7 +6,7 @@ const Login=()=>import('../components/login.vue');
 const Home=()=>import('../components/home.vue');
 const Welcome=()=>import('../components/welcome.vue');
 
-const List=()=>import('../components/goods/list.vue');
+const Category=()=>import('../components/goods/category.vue');
 const Brand=()=>import('../components/goods/brand.vue');
 const Persons=()=>import('../components/persons/persons')
 
@@ -22,7 +22,7 @@ const routes = [
       { path: '/welcome', component: Welcome },
       { path: '/brand', component: Brand },
       { path: '/persons', component: Persons },
-      { path: '/list', component: List },
+      { path: '/category', component: Category },
     ] }
 
 ]
