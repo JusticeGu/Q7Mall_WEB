@@ -8,7 +8,9 @@ const Welcome=()=>import('../components/welcome.vue');
 
 const Category=()=>import('../components/goods/category.vue');
 const Brand=()=>import('../components/goods/brand.vue');
-const Persons=()=>import('../components/persons/persons')
+const Persons=()=>import('../components/persons/persons');
+const AddCategory=()=>import('../components/goods/addCategory.vue');
+
 
 Vue.use(VueRouter)
 
@@ -23,6 +25,7 @@ const routes = [
       { path: '/brand', component: Brand },
       { path: '/persons', component: Persons },
       { path: '/category', component: Category },
+      { path: '/addCategory', component: AddCategory }
     ] }
 
 ]

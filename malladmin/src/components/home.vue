@@ -61,7 +61,7 @@ export default {
            children:[
                {
                  id: 114,
-                 authName: "商品列表",
+                 authName: "商品分类列表",
                  path: "category",
                 },
                 {

@@ -3,7 +3,7 @@
      <!-- 面包屑 -->
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item>品牌管理</el-breadcrumb-item>
+        <el-breadcrumb-item>商品管理</el-breadcrumb-item>
         <el-breadcrumb-item>品牌列表</el-breadcrumb-item>
      </el-breadcrumb>
      <!-- 搜索区域 -->
@@ -90,19 +90,19 @@
     </el-dialog> 
 
      <!-- 品牌修改 -->
-     <el-dialog title="提示" :visible.sync="editBrandVisible" width="30%"
+     <el-dialog title="提示" :visible.sync="editBrandVisible" width="40%"
      center @close="editBrandClosed">
-      <el-form ref="editBrandref" :model="editBrandForm" :rules="addBrandRules" label-width="80px">
+      <el-form ref="editBrandref" :model="editBrandForm" :rules="addBrandRules" label-width="100px">
         <el-form-item label="品牌名称">
           <el-input v-model="editBrandForm.name" disabled></el-input>
         </el-form-item>
-        <el-form-item label="品牌等级">
+        <el-form-item label="品牌等级" label-width="100px">
           <el-select v-model="editBrandForm.b_sort" placeholder="请选择活动区域">
-             <el-option label="等级一" value=0></el-option>
-             <el-option label="等级二" value=1></el-option>
+             <el-option label="等级一" value= 0></el-option>
+             <el-option label="等级二" value= 1></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="品牌logo" prop="logo" >
+        <el-form-item label="品牌logo" prop="logo" label-width="100px">
           <el-input v-model="editBrandForm.logo" ></el-input>
         </el-form-item>
         <el-form-item label="是否名牌">
@@ -110,7 +110,7 @@
         </el-form-item>
       </el-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button @click="editBrandVisible = false">取消</el-button>
           <el-button type="primary" @click="editBrandContent">确 定</el-button>
         </span>
      </el-dialog>
@@ -135,7 +135,7 @@ export default {
        return{
             input:'',
             tableBrandData:[],
-            //获取新闻列表的参数对象 
+            //获取品牌列表的参数对象 
             brandname:'',
             queryInfo:{
               //当前页数
@@ -184,8 +184,9 @@ export default {
       // this.queryInfo
       if(res.rspCode!=='200'){
         this.$message.error('获取品牌列表失败')
+      }else{
+        this.$message.success('获取品牌列表成功');
       }
-      this.$message.success('获取品牌列表成功');
       // console.log(res);
       this.tableBrandData=res.data.content;
       this.total=res.data.totalElements;
@@ -225,13 +226,15 @@ export default {
        console.log(this)
 
        const {data:res}= await this.$axios.post(this.$root.api.brandAdd,
-       {data:this.addBrandForm});
+       this.addBrandForm);
        console.log(res);
-       if(res.rspCode!=='200'){
-         this.$message.error(res.rspMsg)
-         console.log(res.rspMsg)
+       if(res && res.rspCode!=='200'){
+         this.$message.error(res.data)
+        //  console.log(res.rspMsg)
+       }else{
+          this.$message.success(res.data);
        }
-       this.$message.success('添加品牌成功');
+      
        this.brandDialogVisible=false;
        this.getBrandData();
       },
@@ -258,11 +261,12 @@ export default {
       // 修改品牌
      async editBrand(brandname){
         const {data:res}= await this.$axios.get(this.$root.api.brandListQuery,
-         {params: {brandname:this.brandname}});
+          {params: {brandname:brandname}});
         if(res.rspCode!=='200'){
          this.$message.error('查询品牌失败')
          };
-      this.editBrandForm=res.data;   
+         console.log(res);
+      this.editBrandForm=res.data[0];   
       this.editBrandVisible=true;
       
       },
@@ -270,19 +274,26 @@ export default {
         this.$refs.editBrandref.resetFields();
       },
       async editBrandContent(){
-        this.$refs.editBrandref.validate((valid)=>{
-          if(!valid) return
+        this.$refs.editBrandref.validate(async valid=>{
+          if(!valid){
+            return
+          }else{
+            const {data:res}=await this.$axios.put(this.$root.api.brandUpdate,
+            this.editBrandForm);
+            if(res.rspCode!=='200'){
+              this.$message.error('品牌'+res.data)
+            }else{
+              this.$message.success('品牌修改成功')
+            }
+            this.editBrandVisible=false;
+            this.getBrandData();
+            this.$message.success('品牌'+res.data)
+          }
         })
-        const {data:res}=await this.$axios.put(this.$root.api.brandUpdate,
-        this.editBrandForm);
-        if(res.rspCode!=='200'){
-          this.$message.error('品牌更新失败')
-        }
+      },
+      // editBrandContent(){
 
-        this.editBrandVisible=false;
-        this.getBrandData();
-        this.$message.success('品牌更新成功')
-      }
+      // }
     },
 }
 </script>
@@ -296,5 +307,8 @@ export default {
    }
    .el-table{
        margin-top:15px;
+   }
+   .el-pagination{
+     margin-top:20px;
    }
 </style>

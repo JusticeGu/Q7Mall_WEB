@@ -12,11 +12,16 @@ Vue.prototype.$axios=axios;
 
 import api from './config/apiUrl';
 
+import TreeTable from 'vue-table-with-tree-grid';
+Vue.component("tree-table",TreeTable);
+
 Vue.prototype.$message=Message;
 
 Vue.prototype.$confirm= MessageBox.confirm;
 
 Vue.config.productionTip = false
+
+
 
 
 new Vue({

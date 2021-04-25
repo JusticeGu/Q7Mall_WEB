@@ -15,5 +15,10 @@ export default {
 }
 </script>
 <style lang="less">
-  
+  body .zk-table__body-wrapper {
+     overflow: initial !important;
+  }
+  body{
+    min-width:1336px;
+  }
 </style>
