@@ -1,0 +1,10 @@
+stages:
+- name: compile
+  steps:
+  - runScriptConfig:
+      image: node:latest
+      shellScript: |-
+        npm install
+        npm build
+timeout: 60
+notification: {}
